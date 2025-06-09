@@ -32,19 +32,16 @@ int main(int argc, char **argv, char **envp)
     {
         input = get_input(&ms);
 
-        // Detecta Ctrl+D (input == NULL)
         if (!input)
         {
             printf("exit\n");
             safe_free_minishell(&ms);
             exit(0);
         }
-        else
-        {
-            size_t len = ft_strlen(input);
-            if (len > 0 && input[len - 1] == '\r')
-                input[len - 1] = '\0';
-        }
+
+        size_t len = ft_strlen(input);
+        if (len > 0 && input[len - 1] == '\r')
+            input[len - 1] = '\0';
 
         ms.error_syntax = false;
         input = check_input_valid(input);
@@ -52,11 +49,13 @@ int main(int argc, char **argv, char **envp)
         if (*input)
         {
             save_history_file(&ms, input);
-            control_cmd(parsecmd(input, &ms), &ms);
+            t_cmd *cmd = parsecmd(input, &ms);
+            control_cmd(cmd, &ms);
+            free_cmd(cmd); // ✅ Libera memoria del comando
         }
 
         free(input);
     }
 
-    return 0; // Nunca llega aquí
+    return 0;
 }

@@ -145,7 +145,7 @@ char	*expand_variables(char *arg, t_minishell *minishell)
 		chunk = expand_chunk(&s, quote, minishell);
 		if (!chunk)
 			continue ;
-		result = strjoin_free(result, chunk);
+		result = strjoin_free(result, chunk); // libera automáticamente chunk y result previos
 	}
-	return (result);
+	return result;
 }

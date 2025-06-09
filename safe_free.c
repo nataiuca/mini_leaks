@@ -63,3 +63,36 @@ char *join_and_free(char *a, char *b)
 	free(b);
 	return (res);
 }
+
+void	free_cmd(t_cmd *cmd)
+{
+	int	i;
+
+	if (!cmd)
+		return ;
+	if (cmd->type == EXEC)
+	{
+		t_execcmd *ecmd = (t_execcmd *)cmd;
+		i = 0;
+		while (ecmd->argv[i])
+		{
+			free(ecmd->argv[i]);
+			i++;
+		}
+	}
+	else if (cmd->type == PIPE)
+	{
+		t_pipecmd *pcmd = (t_pipecmd *)cmd;
+		free_cmd(pcmd->left);
+		free_cmd(pcmd->right);
+	}
+	else if (cmd->type == REDIR)
+	{
+		t_redircmd *rcmd = (t_redircmd *)cmd;
+		free_cmd(rcmd->cmd);
+		free(rcmd->file);
+		free(rcmd->efile);
+		free(rcmd->hdoc);
+	}
+	free(cmd);
+}
